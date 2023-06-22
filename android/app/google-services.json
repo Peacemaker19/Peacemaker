@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1081937547333",
+    "project_id": "notifications-51e4a",
+    "storage_bucket": "notifications-51e4a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1081937547333:android:4f003db4bbfd7aaa62532c",
+        "android_client_info": {
+          "package_name": "com.example.peacemaker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1081937547333-a1l147dkt9i1er3amfc5l8s885965nlm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXvxrpvHE1uKY7jxAvwwGwPiZLDyt45kc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1081937547333-a1l147dkt9i1er3amfc5l8s885965nlm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
