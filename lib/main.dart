@@ -1,77 +1,60 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:peacemaker/authentication.dart';
-import 'package:peacemaker/noti.dart';
+import 'package:peacemaker/feature/authentication/cubit/authetication_cubit.dart';
+import 'package:peacemaker/feature/authentication/screen/authentication.dart';
+
+import 'feature/authentication/cubit/authetication_state.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
 void main() async {
-  final fcmToken = await FirebaseMessaging.instance.getToken();
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  await Firebase.initializeApp();
+  //final fcmToken = await FirebaseMessaging.instance.getToken();
+  runApp(EasyLocalization(
+    supportedLocales: const [
+      Locale("en"),
+      Locale("de"),
+    ],
+    path: 'assets/translations',
+    fallbackLocale: const Locale('en'),
+    saveLocale: false,
+    useOnlyLangCode: true,
+    child: MultiBlocProvider(
+      providers: [
+        BlocProvider(
+            create: (context) => AutheticationCubit(AutheticationInitial()))
+      ],
+      child: MyApp(),
+    ),
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({super.key});
+  AutheticationCubit? autheticationCubit;
+  void rebuildAllChildren(BuildContext context) {
+    void rebuild(Element el) {
+      el.markNeedsBuild();
+      el.visitChildren(rebuild);
+    }
 
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: AuthScreen(),
-    );
-  }
-}
-
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    super.initState();
-    Noti.initialize(flutterLocalNotificationsPlugin);
+    (context as Element).visitChildren((rebuild));
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      child: Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(
-            backgroundColor: Colors.blue.withOpacity(0.5),
-          ),
-          body: Center(
-            child: SizedBox(
-              width: 200,
-              height: 200,
-              child: Column(
-                children: [
-                  const ElevatedButton(
-                      onPressed: getFcmToken, child: Text('GetToken')),
-                  ElevatedButton(
-                    onPressed: () {
-                      Noti.showBigTextNotification(
-                          title: "Peacemaker",
-                          body: "You only live once..",
-                          fln: flutterLocalNotificationsPlugin);
-                    },
-                    child: const Text("Notify me"),
-                  ),
-                ],
-              ),
-            ),
-          )),
+    return MaterialApp(
+      locale: context.locale,
+      supportedLocales: context.supportedLocales,
+      localizationsDelegates: context.localizationDelegates,
+      home: const AuthScreen(),
     );
   }
-}
-
-void getFcmToken() async {
-  final fcmToken = await FirebaseMessaging.instance.getToken();
-  print(fcmToken);
 }
